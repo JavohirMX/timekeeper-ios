@@ -2,7 +2,7 @@
 //  ContentView.swift
 //  timekeeper
 //
-//  Created by Javohir Muhammad on 15/04/26.
+//  Created by Javohir Muhammad and Ishandeep Singh on 15/04/26.
 //
 
 import SwiftUI
@@ -49,7 +49,6 @@ struct ContentView: View {
                 }
             }.listStyle(.plain)
         }
-        .navigationBarTitleDisplayMode(.large)
         
         TabView{
             Tab("World Clock", systemImage: "globe"){
