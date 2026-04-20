@@ -7,20 +7,9 @@
 
 import SwiftUI
 
-struct TimeAlarm: Identifiable {
-    let id = UUID()
-    let time: String
-    var isOn: Bool
-}
-
 struct AlarmView: View {
-    @State private var alarms: [TimeAlarm] = [
-        TimeAlarm(time: "08.00", isOn: true),
-        TimeAlarm(time: "14.00", isOn: false),
-        TimeAlarm(time: "08.00", isOn: true),
-        TimeAlarm(time: "14.00", isOn: false)
-    ]
-    @State private var toggleOn: Bool = true
+
+    @State private var alarms = defaultAlarms
     var body: some View {
         
         NavigationStack {
@@ -56,8 +45,8 @@ struct AlarmView: View {
                     .foregroundStyle(.primary)
                 }
                 Section {
-                    ForEach($alarms) {
-                        $alarm in eachAlarm(time: alarm.time, toggle: $alarm.isOn)
+                    ForEach($alarms) { alarm in
+                        eachAlarm(time: alarm.wrappedValue.time, toggle: alarm.isOn)
                     }
                 } header: {
                     Text("Other")
@@ -68,7 +57,7 @@ struct AlarmView: View {
                 .foregroundStyle(.primary)
             }
             .listStyle(.plain)
-            .navigationBarTitle("Alarm")
+            .navigationBarTitle("Alarms")
             .toolbar {
                 ToolbarItem (placement: .topBarLeading) {
                     EditButton()
@@ -82,19 +71,24 @@ struct AlarmView: View {
 }
 
 func eachAlarm(time: String, toggle: Binding<Bool>) -> some View {
-    VStack(alignment: .leading, spacing: 0){
-            HStack(){
-                Text(time)
-                    .font(.system(size: 60, weight: .light))
-                Spacer()
-                Toggle("", isOn: toggle)
-                    .toggleStyle(.switch)
-                    .tint(.green)
+    ScrollView { //scrollview to remove chevron from the list
+        NavigationLink() {
+            SecondScreen()
+        } label: {
+            VStack(alignment: .leading, spacing: 0){
+                HStack(){
+                    Text(time)
+                        .font(.system(size: 60, weight: .light))
+                    Spacer()
+                    Toggle("", isOn: toggle)
+                        .toggleStyle(.switch)
+                        .tint(.green)
+                }.padding(.trailing, 2)
+                Text("Alarm, everyday")
             }
-        Text("Alarm, everyday")
         }
+    }
 }
-
 
 #Preview {
     AlarmView()
