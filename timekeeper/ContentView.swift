@@ -10,17 +10,11 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         TabView {
-            Tab("World Clock", systemImage: "globe") {
-                
+            Tab("Schedule", systemImage: "clock.circle.fill") {
+                ScheduleView()
             }
-            Tab("Alarm", systemImage: "alarm") {
+            Tab("People", systemImage: "person.3.fill") {
                 AlarmView()
-            }
-            Tab("Stopwatch", systemImage: "stopwatch") {
-                
-            }
-            Tab("Timers", systemImage: "timer") {
-                
             }
         }
         .tint(.orange)
