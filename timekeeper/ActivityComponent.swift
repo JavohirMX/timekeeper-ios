@@ -17,40 +17,31 @@ struct ActivityComponent: View {
     let iconName: String
     
     var body: some View {
-        // 3. Highlighted Sleep Track
+        // Highlighted Sleep Track
         // Calculate the difference, normalizing negative values so it properly wraps around midnight
         let difference = (toAngle - startAngle).truncatingRemainder(dividingBy: 360)
         let normalizedDiff = difference < 0 ? difference + 360 : difference
         
         Circle()
             .trim(from: 0, to: normalizedDiff / 360)
-            .stroke(color, style: StrokeStyle(lineWidth: 25, lineCap: .round, lineJoin: .round))
+            .stroke(color, style: StrokeStyle(lineWidth: 24, lineCap: .round))
             // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (3 o'clock)
             .rotationEffect(.degrees(startAngle - 90))
-            .frame(width: 259 + extraSpace)
+            .frame(width: 258 + extraSpace)
+            
         
         
-        // 4. Bedtime Knob (Start)
+        // Bedtime Knob (Start)
         KnobView(imageName: iconName)
-            .offset(x: radius-55)
-            .rotationEffect(.degrees(startAngle - 90))
+            .offset(x: radius-56)
+            .rotationEffect(.degrees(startAngle - 88))
 //            .gesture(
 //                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
 //                    .onChanged { value in
 //                        startAngle = getAngle(location: value.location, center: center)
 //                    }
 //            )
-        
-        // 5. Wake Up Knob (End)
-//        KnobView(imageName: "alarm")
-//            .offset(x: radius-55)
-//            .rotationEffect(.degrees(toAngle - 90))
-//            .gesture(
-//                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
-//                    .onChanged { value in
-//                        toAngle = getAngle(location: value.location, center: center)
-//                    }
-//            )
+
     }
     /// Converts a dragged coordinate back into an angle mapped strictly between 0° and 360°
     private func getAngle(location: CGPoint, center: CGPoint) -> Double {
@@ -66,9 +57,24 @@ struct ActivityComponent: View {
     }
 }
 
+struct KnobView: View {
+    var imageName: String
+    
+    var body: some View {
+        Image(systemName: imageName)
+            .font(.system(size: 18, weight: .bold))
+            .foregroundColor(.primary)
+            .frame(width: 40, height: 40)
+//                    .background(Color.white)
+            .clipShape(Circle())
+        // Keeps the icon from rotating upside down even though its container is rotated
+            .rotationEffect(.degrees(90))
+            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 3)
+    }
+}
 #Preview {
-    var startAngle: Double = 0
-    var toAngle: Double = 120
+    let startAngle: Double = 0
+    let toAngle: Double = 120
     let width: CGFloat = 350
     let center = CGPoint(x: width / 2, y: width / 2)
     let radius = width / 2

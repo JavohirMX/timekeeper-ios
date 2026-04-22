@@ -9,41 +9,33 @@ struct ScheduleView: View {
     
     @State private var startAngle: Double = 0     // Bedtime (12:00 AM)
     @State private var toAngle: Double = 120      // Wake up (8:00 AM)
-    private var times: [[Double]] = [[0,120],[150,180], [210,270]]
-    private var colors: [Color] = [Color.blue, Color.green, Color.yellow]
+    var times: [[Double]] = [[0,120],[150,180], [210,270]]
+    var colors: [Color] = [Color.color2, Color.color2, Color.color2]
     var icons: [String] = ["moon.fill", "fork.knife", "text.book.closed.fill"]
     
     private var times2: [[Double]] = [[70,170],[250,290], [310,350]]
-    private var colors2: [Color] = [Color.yellow, Color.green, Color.yellow]
+    private var colors2: [Color] = [Color.color4, Color.color4, Color.color4]
     
     @State private var selection = "You"
     let friends = ["You", "Micheal"]
+    
+    @State var currentHourAngle: Double = 0
+    @State var currentTime: String = "0.00"
     
     var body: some View {
         VStack(spacing: 50) {
             Text("Schedule")
                 .font(.system(size: 36, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
-                
-//            Spacer()
-            // MARK: - Central Sleep Duration Display
-//            VStack(spacing: 8) {
-//                Text(getSleepDuration())
-//                    .font(.system(size: 44, weight: .bold, design: .rounded))
-//                
-//                Text("Sleep Duration")
-//                    .font(.headline)
-//                    .foregroundColor(.secondary)
-//            }
             
             // MARK: - Circular Slider
             GeometryReader { proxy in
                 let width = proxy.size.width
                 let center = CGPoint(x: width / 2, y: width / 2)
                 let radius = width / 2
-//                Text("\(radius)")
+                //                Text("\(radius)")
                 ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
-                    // 1. Inner Clock Ticks
+                    // Inner Clock Ticks
                     ForEach(0..<120, id: \.self) { i in
                         Rectangle()
                             .fill(i % 10 == 0 ? Color.primary : Color.gray.opacity(0.3))
@@ -52,6 +44,7 @@ struct ScheduleView: View {
                             .rotationEffect(.degrees(Double(i) * 3))
                     }
                     
+                    // Clock Hour Labels
                     let hoursPM = ["12PM", "2PM", "4PM", "6PM", "8PM", "10PM"]
                     ForEach(hoursPM.indices, id: \.self) { index in
                         Text("\(hoursPM[index])")
@@ -60,7 +53,7 @@ struct ScheduleView: View {
                             .rotationEffect(.init(degrees: Double(index) * -30))
                             .offset(y: (width - 70) / 3)
                             .rotationEffect(.degrees(Double(index) * 30))
-                                
+                        
                     }
                     let hoursAM = ["12AM", "2AM", "4AM", "6AM", "8AM", "10AM"]
                     ForEach(hoursAM.indices, id: \.self) { index in
@@ -70,45 +63,51 @@ struct ScheduleView: View {
                             .rotationEffect(.init(degrees: Double(index) * -30+180))
                             .offset(y: (width - 70) / 3)
                             .rotationEffect(.degrees(Double(index) * 30+180))
-                                
+                        
                     }
                     
-                    // 2. Track Background
+                    // Clock
                     
-                        
                     Circle()
                         .fill(Color.black)
                         .zIndex(-2)
                         .frame(width: 235)
                     Circle()
-                        .fill(Color.gray.opacity(0.7))
-                        .zIndex(-1)
+                        .fill(Color.gray)
+                        .zIndex(3)
                         .frame(width: 15)
                     Circle()
-                        .fill(Color.orange)
+                        .fill(Color.color1)
                         .frame(height: 280)
                         .zIndex(-5)
                     Circle()
-                        .fill(Color.mint.opacity(0.9))
+                        .fill(Color.color1.opacity(0.6))
                         .frame(width: 330)
                         .zIndex(-6)
                     Circle()
                         .fill(Color.clear)
                         .frame(width: .infinity)
                         .zIndex(-99)
+                    
+                    
+                    // Hour handle
                     Path { path in
-                        path.move(to: CGPoint(x: radius, y: radius-9))
-                        path.addLine(to: CGPoint(x: 300, y: 330))
+                        path.move(to: CGPoint(x: radius, y: radius+5))
+                        path.addLine(to: CGPoint(x: radius, y: 20))
                     }
                     .stroke(.red, lineWidth: 2)
                     .zIndex(2)
+                    .rotationEffect(.degrees(currentHourAngle))
                     
-                    Text("9.40am")
+                    // Current Time
+                    Text("\(currentTime)")
                         .font(.caption)
                         .foregroundColor(Color.white)
-                        .position(x: 310, y: 345)
+                        .rotationEffect(.init(degrees: -currentHourAngle))
+                        .offset(y: -(width + 10) / 2)
+                        .rotationEffect(.degrees(currentHourAngle))
 
-                    
+                    // Activities
                     ForEach(times.indices, id: \.self) {ind in
                         ActivityComponent(startAngle: times[ind][0], toAngle:times[ind][1], radius: radius, center: center, color: colors[ind], extraSpace: 0, iconName: icons[ind])
                     }
@@ -116,36 +115,59 @@ struct ScheduleView: View {
                     ForEach(times2.indices, id: \.self) {ind in
                         ActivityComponent(startAngle: times2[ind][0], toAngle:times2[ind][1], radius: radius+23, center: center, color: colors2[ind], extraSpace: 47, iconName: icons[ind])
                     }
-
+                    
                 }
-                .coordinateSpace(name: "slider") // Used by DragGesture to ensure coordinates are relative to the center
+                //.coordinateSpace(name: "slider") // Used by DragGesture to ensure coordinates are relative to the center
             }
-            .frame(width: .infinity, height: 350)
+            .frame(width: .infinity, height: 390)
             Spacer()
             Spacer()
+            
+            // Segmented picker
             VStack {
-                Picker("Select a color", selection: $selection) {
+                Picker("Select", selection: $selection) {
                     ForEach(friends, id: \.self) { friend in
                         Text(friend).tag(friend)
                     }
                 }
                 .pickerStyle(.segmented) // Converts the picker to a segmented control
                 
-//                Text("Selected: \(selection)")
             }
             .padding()
-            // MARK: - Bottom Time Labels
-//            HStack(spacing: 50) {
-//                TimeDisplayView(title: "Bedtime", time: getTime(angle: startAngle), icon: "moon.zzz.fill")
-//                TimeDisplayView(title: "Wake up", time: getTime(angle: toAngle), icon: "alarm.fill")
-//            }
+            
             
         }
         .padding()
+        .onAppear {
+            updateClock()
+            Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+                updateClock()
+            }
+        }
     }
     
-    // MARK: - Mathematical Helpers
+    // MARK: - Helpers
     
+    private func getTimeAngle() -> Double {
+        // 360° maps to 24 hours. Therefore:
+        // 15° = 1 hour, 1° = 4 minutes, 1 minute = 0.25°
+        // Top (12 o'clock) is 0° mathematically.
+        let hour = Double(Calendar.current.component(.hour, from: Date()))
+        let minute = Double(Calendar.current.component(.minute, from: Date()))
+        let angle = Double(hour * 15 + minute * 0.25)
+        
+        return angle
+    }
+    private func getTime() -> String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        let minute = Calendar.current.component(.minute, from: Date())
+        
+        return "\(hour).\(minute)"
+    }
+    private func updateClock() {
+        currentHourAngle = getTimeAngle()
+        currentTime = getTime()
+    }
     /// Converts a dragged coordinate back into an angle mapped strictly between 0° and 360°
     private func getAngle(location: CGPoint, center: CGPoint) -> Double {
         let vector = CGVector(dx: location.x - center.x, dy: location.y - center.y)
@@ -160,7 +182,7 @@ struct ScheduleView: View {
     }
     
     /// Converts a circular angle into formatted standard times (e.g. "8:00 AM")
-    private func getTime(angle: Double) -> String {
+    private func getTimeFromAngle(angle: Double) -> String {
         let totalMinutes = angle * 4
         let hours = Int(totalMinutes / 60)
         let minutes = Int(totalMinutes.truncatingRemainder(dividingBy: 60))
@@ -177,7 +199,7 @@ struct ScheduleView: View {
     }
     
     /// Computes the delta string between the two points
-    private func getSleepDuration() -> String {
+    private func getDuration() -> String {
         let difference = (toAngle - startAngle).truncatingRemainder(dividingBy: 360)
         let normalizedDiff = difference < 0 ? difference + 360 : difference
         
@@ -187,44 +209,26 @@ struct ScheduleView: View {
         
         return "\(hours)h \(minutes)m"
     }
+    
 }
 
-// MARK: - Reusable UI Components
 
-struct KnobView: View {
-    var imageName: String
-    
-    var body: some View {
-        Image(systemName: imageName)
-            .font(.system(size: 18, weight: .bold))
-            .foregroundColor(.primary)
-            .frame(width: 40, height: 40)
-//            .background(Color.white)
-            .clipShape(Circle())
-            // Keeps the icon from rotating upside down even though its container is rotated
-            .rotationEffect(.degrees(90))
-            .shadow(color: Color.black.opacity(0.2), radius: 6, x: 0, y: 3)
+extension Color {
+    init(hex: String) {
+        let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
+        var int: UInt64 = 0
+        Scanner(string: hex).scanHexInt64(&int)
+        let r, g, b: UInt64
+        (r, g, b) = (int >> 16, int >> 8 & 0xFF, int & 0xFF)
+        self.init(red: Double(r) / 255, green: Double(g) / 255, blue: Double(b) / 255)
     }
-}
-
-struct TimeDisplayView: View {
-    var title: String
-    var time: String
-    var icon: String
     
-    var body: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 6) {
-                Image(systemName: icon)
-                    .foregroundColor(.blue)
-                Text(title)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-            Text(time)
-                .font(.title2.bold())
-        }
-    }
+    
+    static let color1 = Color(hex: "#6C757D")
+    static let color2 = Color(hex: "#52b788")
+    static let color3 = Color(hex: "#6b9080")
+    static let color4 = Color(hex: "#2d6a4f")
+    
 }
 
 #Preview {
