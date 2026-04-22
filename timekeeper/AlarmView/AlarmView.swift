@@ -73,7 +73,6 @@ struct AlarmView: View {
 func eachAlarm(time: String, toggle: Binding<Bool>) -> some View {
     ScrollView { //scrollview to remove chevron from the list
         NavigationLink() {
-            SecondScreen()
         } label: {
             VStack(alignment: .leading, spacing: 0){
                 HStack(){
