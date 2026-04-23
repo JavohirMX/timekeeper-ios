@@ -8,33 +8,36 @@
 import SwiftUI
 
 struct ActivityComponent: View {
-    var startAngle: Double
-    var toAngle: Double
+    var activity: Activity
+//    var startAngle: Double
+//    var toAngle: Double
     let radius: CGFloat
     let center: CGPoint
     let color: Color
     let extraSpace: CGFloat
-    let iconName: String
+//    let iconName: String
     
     var body: some View {
         // Highlighted Sleep Track
         // Calculate the difference, normalizing negative values so it properly wraps around midnight
-        let difference = (toAngle - startAngle).truncatingRemainder(dividingBy: 360)
+        let difference = (activity.toAngle() - activity.startAngle()).truncatingRemainder(dividingBy: 360)
         let normalizedDiff = difference < 0 ? difference + 360 : difference
         
         Circle()
             .trim(from: 0, to: normalizedDiff / 360)
+//            .fill()
             .stroke(color, style: StrokeStyle(lineWidth: 24, lineCap: .round))
             // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (3 o'clock)
-            .rotationEffect(.degrees(startAngle - 90))
+            .rotationEffect(.degrees(activity.startAngle() - 90))
             .frame(width: 258 + extraSpace)
+            
             
         
         
         // Bedtime Knob (Start)
-        KnobView(imageName: iconName)
+        KnobView(imageName: activity.icon)
             .offset(x: radius-56)
-            .rotationEffect(.degrees(startAngle - 88))
+            .rotationEffect(.degrees(activity.startAngle() - 88))
 //            .gesture(
 //                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
 //                    .onChanged { value in
@@ -73,10 +76,10 @@ struct KnobView: View {
     }
 }
 #Preview {
-    let startAngle: Double = 0
+    let activity: Activity = Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0))
     let toAngle: Double = 120
     let width: CGFloat = 350
     let center = CGPoint(x: width / 2, y: width / 2)
     let radius = width / 2
-    ActivityComponent(startAngle: startAngle, toAngle: toAngle, radius: radius, center: center, color: Color.blue, extraSpace: 0, iconName: "moon.fill")
+    ActivityComponent(activity: activity, radius: radius, center: center, color: Color.blue, extraSpace: 0)
 }
