@@ -13,21 +13,20 @@ struct ProfileInfo: Identifiable {
     let imageName: String
     let email: String
     let phNum: String
-    let localTime: Date
+    let timezoneIdentifier: String 
     var schedules: [Schedule]
 }
 
 var userProfile: [ProfileInfo] = [
-    ProfileInfo(name: "Ishandeep (Me)", imageName: "Ish", email: "ish.singh@gmail.com", phNum: "+65 9123 4567", localTime: timeSetter(hour: 14, minute: 0), schedules: defaultSchedule)
+    ProfileInfo(name: "Ishandeep (Me)", imageName: "Ish", email: "ish.singh@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule)
 ]
 
 var defaultProfile: [ProfileInfo] = [
-    ProfileInfo(name: "Johnny ", imageName: "john", email: "john@gmail.com", phNum: "+65 9123 4567", localTime: timeSetter(hour: 6, minute: 30), schedules: defaultSchedule),
-    ProfileInfo(name: "Nataleen (Telolet)", imageName: "talin", email: "john@gmail.com", phNum: "+65 9123 4567", localTime: timeSetter(hour: 9, minute: 30), schedules: defaultSchedule),
-    ProfileInfo(name: "Nathan", imageName: "nathan", email: "john@gmail.com", phNum: "+65 9123 4567", localTime: timeSetter(hour: 2, minute: 00), schedules: defaultSchedule),
-    ProfileInfo(name: "Huy Tran", imageName: "huy", email: "john@gmail.com", phNum: "+65 9123 4567", localTime: timeSetter(hour: 16, minute: 00), schedules: defaultSchedule),
-    ProfileInfo(name: "Nil", imageName: "nil", email: "john@gmail.com", phNum: "+65 9123 4567", localTime: timeSetter(hour: 16, minute: 00), schedules: defaultSchedule)
+    ProfileInfo(name: "Johnny ", imageName: "john", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Asia/Jakarta", schedules: defaultSchedule),
+    ProfileInfo(name: "Nataleen (Telolet)", imageName: "talin", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Australia/Sydney", schedules: defaultSchedule),
+    ProfileInfo(name: "Nathan", imageName: "nathan", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Europe/London", schedules: defaultSchedule),
+    ProfileInfo(name: "Huy Tran", imageName: "huy", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule),
+    ProfileInfo(name: "Nil", imageName: "nil", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule)
 ]
-
 
 

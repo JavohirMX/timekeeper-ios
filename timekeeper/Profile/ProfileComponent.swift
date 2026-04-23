@@ -24,8 +24,10 @@ struct ProfileComponent:View {
                     .padding(.trailing, 5)
                 VStack(alignment: .leading){
                     Text(profile.name).font(.title2).fontWeight(.bold)
-                    Text(profile.localTime, style: .time).font(.subheadline).foregroundStyle(.secondary)
-                }
+                    Text(Date(), style: .time)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)                }
                 Spacer()
             }
         }

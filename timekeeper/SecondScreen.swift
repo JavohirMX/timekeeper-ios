@@ -19,9 +19,10 @@ struct SecondScreen: View {
                         .bold()
                     
                     VStack(spacing: -5) {
-                        Text(profile.localTime, style: .time)
+                        Text(Date(), style: .time)
                             .font(.system(size: 60, weight: .light))
                             .foregroundStyle(.white)
+                            .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)
                         Text("Local Time")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -71,6 +72,9 @@ struct SecondScreen: View {
                             }
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
+                            //to format all the dates in this block using the friend's timezone
+                            .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)
+                                        
                         }
                         Spacer()
                     }

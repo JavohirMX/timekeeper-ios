@@ -12,10 +12,11 @@ struct ProfileView: View {
     @State private var profiles = defaultProfile
     @State private var usersProfile = userProfile[0]
     @State private var presentAddSheet = true
-    @State private var firstName = ""
-    @State private var lastName = ""
-    @State private var nickName = ""
-    @State private var notes = ""
+    @State private var presentTimezoneSheet = false
+    @State private var name = ""
+    @State private var email = ""
+    @State private var phone = ""
+    @State private var selectedTimezone = TimeZone.current.identifier
     @State private var selectedItem: PhotosPickerItem? = nil
     
     var body: some View {
@@ -25,14 +26,6 @@ struct ProfileView: View {
                 Section {
                     ProfileComponent(profile: $usersProfile)
                 }
-//                header:{
-//                    HStack {
-//                        Image(systemName: "person.fill")
-//                        Text("Me")
-//                            .font(.title2)
-//                            .bold()
-//                    }
-//                }
                 .foregroundStyle(.primary)
                 Section {
                     ForEach($profiles) { profile in
@@ -64,13 +57,7 @@ struct ProfileView: View {
         .sheet(isPresented: $presentAddSheet) {
             NavigationStack {
                 ZStack{
-                    Color(.secondarySystemBackground)
                     VStack {
-                        //                        Button(action: {
-                        //                            presentAddSheet.toggle()
-                        //                            firstName = ""; lastName = "";
-                        //                            nickName = ""; notes = "";
-                        //                        }
                         Image("pfp2")
                             .resizable()
                             .scaledToFit()
@@ -78,21 +65,45 @@ struct ProfileView: View {
                             .clipShape(Circle())
                         PhotosPicker(selection: $selectedItem, matching: .images) {
                             Text("Select Image")
-                                .foregroundColor(.black)
+                                .foregroundColor(.primary)
                                 .padding(.vertical, 12)
                                 .padding(.horizontal, 28)
-                                .background(.ultraThinMaterial)
-                                .background(.gray.opacity(0.3))
+                                .background(.regularMaterial)
                                 .cornerRadius(24)
-                                .font(.system(size: 16, weight: .bold))
                         }
                         .padding(.top, 16)
-                        
                         List {
-                            TextField("First Name", text: $firstName)
-                            TextField("Last Name", text: $lastName)
-                            TextField("Nick Name", text: $nickName)
-                            TextField("Notes / Fun Fact", text: $notes)
+                            HStack {
+                                Text("Name")
+                                TextField("Enter name", text: $name)
+                                    .multilineTextAlignment(.trailing)
+                            }
+                            
+                            HStack {
+                                Text("Email")
+                                TextField("Enter email", text: $email)
+                                    .multilineTextAlignment(.trailing)
+                            }
+                            
+                            HStack {
+                                Text("Phone")
+                                TextField("Enter phone", text: $phone)
+                                    .multilineTextAlignment(.trailing)
+                            }
+                            HStack {
+                                Text("Timezone")
+                                Spacer()
+                                Text("Asia/Jakarta")
+                                    .foregroundColor(.secondary)
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.secondary)
+                                    .font(.caption)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                presentTimezoneSheet = true
+                            }
+                            
                         }
                     }
                 }
@@ -101,13 +112,10 @@ struct ProfileView: View {
                     ToolbarItem(placement: .cancellationAction) {
                         Button (action: {
                             presentAddSheet.toggle()
-                            firstName = ""; lastName = "";
-                            nickName = ""; notes = "";
+                            name = "";
                         })  {
                             Image(systemName: "xmark")
-                            .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.primary)
-                            .frame(width: 32, height: 32)
                             .clipShape(Circle())
                         }
                     }
@@ -115,17 +123,15 @@ struct ProfileView: View {
                     ToolbarItem(placement: .confirmationAction) {
                         Button {
                             presentAddSheet.toggle()
-                            firstName = ""; lastName = "";
-                            nickName = ""; notes = "";
+                            name = "";
                         } label: {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.primary)
-                            .frame(width: 32, height: 32)
-                            //.glassEffect(.regular.tint(.orange))
+
                             
                             
-                        }
+                        }.buttonStyle(.borderedProminent)
+                            .tint(.orange)
                             
                     }
                 }
