@@ -3,18 +3,20 @@
 import SwiftUI
 
 struct ScheduleView: View {
-    // 360° maps to 24 hours. Therefore:
-    // 15° = 1 hour, 1° = 4 minutes
-    // Top (12 o'clock) is 0° mathematically.
     
-    @State private var startAngle: Double = 0     // Bedtime (12:00 AM)
-    @State private var toAngle: Double = 120      // Wake up (8:00 AM)
-    var times: [[Double]] = [[0,120],[150,180], [210,270]]
-    var colors: [Color] = [Color.color2, Color.color2, Color.color2]
-    var icons: [String] = ["moon.fill", "fork.knife", "text.book.closed.fill"]
+    var schedule1: [Activity] = [
+        Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
+        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 23, minute: 0), endTime: timeSetter(hour: 7, minute: 0)),
+        Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 12, minute: 20), endTime: timeSetter(hour: 13, minute: 10)),
+        Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 8, minute: 0), endTime: timeSetter(hour: 12, minute: 0)),
+    ]
     
-    private var times2: [[Double]] = [[70,170],[250,290], [310,350]]
-    private var colors2: [Color] = [Color.color4, Color.color4, Color.color4]
+    var schedule2: [Activity] = [
+        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 4, minute: 0), endTime: timeSetter(hour: 11, minute: 0)),
+        Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
+        Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 18, minute: 30), endTime: timeSetter(hour: 19, minute: 20)),
+        Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
+    ]
     
     @State private var selection = "You"
     let friends = ["You", "Micheal"]
@@ -22,11 +24,18 @@ struct ScheduleView: View {
     @State var currentHourAngle: Double = 0
     @State var currentTime: String = "0.00"
     
+    //    var losAngelesHour: Int {
+    //            var calendar = Calendar.current
+    //            calendar.timeZone = TimeZone(identifier: "America/Los_Angeles") ?? .current
+    //            return calendar.component(.hour, from: Date())
+    //        }
+    
     var body: some View {
         VStack(spacing: 50) {
             Text("Schedule")
                 .font(.system(size: 36, weight: .bold))
                 .frame(maxWidth: .infinity, alignment: .leading)
+            
             
             // MARK: - Circular Slider
             GeometryReader { proxy in
@@ -36,12 +45,19 @@ struct ScheduleView: View {
                 //                Text("\(radius)")
                 ZStack(alignment: Alignment(horizontal: .center, vertical: .center)) {
                     // Inner Clock Ticks
-                    ForEach(0..<120, id: \.self) { i in
+                    ForEach(0..<144, id: \.self) { i in
                         Rectangle()
-                            .fill(i % 10 == 0 ? Color.primary : Color.gray.opacity(0.3))
-                            .frame(width: 2, height: i % 10 == 0 ? 12 : 5)
-                            .offset(y: -radius + 55) // Indent the ticks slightly
-                            .rotationEffect(.degrees(Double(i) * 3))
+                            .fill(i % 6 == 0 ? Color.primary : Color.gray.opacity(0.3))
+                            .frame(width: 2, height: i % 6 == 0 ? 12 : 5)
+                            .offset(y: -radius + 56) // Indent the ticks slightly
+                            .rotationEffect(.degrees(Double(i) * 2.5))
+                    }
+                    ForEach(0..<144, id: \.self) { i in
+                        Rectangle()
+                            .fill(i % 6 == 0 ? Color.primary : Color.gray.opacity(0.3))
+                            .frame(width: 2, height: i % 6 == 0 ? 12 : 5)
+                            .offset(y: -radius + 33) // Indent the ticks slightly
+                            .rotationEffect(.degrees(Double(i) * 2.5))
                     }
                     
                     // Clock Hour Labels
@@ -49,6 +65,7 @@ struct ScheduleView: View {
                     ForEach(hoursPM.indices, id: \.self) { index in
                         Text("\(hoursPM[index])")
                             .font(.caption)
+                            .bold(index % 3 == 0 ? true : false)
                             .foregroundColor(.primary.opacity(index % 3 == 0 ? 1 : 0.6))
                             .rotationEffect(.init(degrees: Double(index) * -30))
                             .offset(y: (width - 70) / 3)
@@ -59,12 +76,21 @@ struct ScheduleView: View {
                     ForEach(hoursAM.indices, id: \.self) { index in
                         Text("\(hoursAM[index])")
                             .font(.caption)
+                            .bold(index % 3 == 0 ? true : false)
                             .foregroundColor(.primary.opacity(index % 3 == 0 ? 1 : 0.6))
                             .rotationEffect(.init(degrees: Double(index) * -30+180))
                             .offset(y: (width - 70) / 3)
                             .rotationEffect(.degrees(Double(index) * 30+180))
                         
                     }
+                    Image(systemName: "sun.max.fill")
+                        .foregroundStyle(Color.yellow)
+                        .offset(y: (width - 50) / 4)
+                    Image(systemName: "moon.fill")
+                        .foregroundStyle(Color.indigo)
+                        .offset(y: -(width - 50) / 4)
+                    
+                    
                     
                     // Clock
                     
@@ -77,25 +103,20 @@ struct ScheduleView: View {
                         .zIndex(3)
                         .frame(width: 15)
                     Circle()
-                        .fill(Color.color1)
+                        .fill(Color.clockGray)
                         .frame(height: 280)
                         .zIndex(-5)
                     Circle()
-                        .fill(Color.color1.opacity(0.6))
+                        .fill(Color.clockGray.opacity(0.6))
                         .frame(width: 330)
                         .zIndex(-6)
-                    Circle()
-                        .fill(Color.clear)
-                        .frame(width: .infinity)
-                        .zIndex(-99)
-                    
                     
                     // Hour handle
                     Path { path in
                         path.move(to: CGPoint(x: radius, y: radius+5))
-                        path.addLine(to: CGPoint(x: radius, y: 20))
+                        path.addLine(to: CGPoint(x: radius, y: 25))
                     }
-                    .stroke(.red, lineWidth: 2)
+                    .stroke(.orange, lineWidth: 2)
                     .zIndex(2)
                     .rotationEffect(.degrees(currentHourAngle))
                     
@@ -104,22 +125,22 @@ struct ScheduleView: View {
                         .font(.caption)
                         .foregroundColor(Color.white)
                         .rotationEffect(.init(degrees: -currentHourAngle))
-                        .offset(y: -(width + 10) / 2)
+                        .offset(y: -(width) / 2)
                         .rotationEffect(.degrees(currentHourAngle))
-
+                    
                     // Activities
-                    ForEach(times.indices, id: \.self) {ind in
-                        ActivityComponent(startAngle: times[ind][0], toAngle:times[ind][1], radius: radius, center: center, color: colors[ind], extraSpace: 0, iconName: icons[ind])
+                    ForEach(schedule1.indices, id: \.self) {ind in
+                        ActivityComponent(activity: schedule1[ind], radius: radius, center: center, color: Color.lightGreen, extraSpace: 0)
                     }
                     
-                    ForEach(times2.indices, id: \.self) {ind in
-                        ActivityComponent(startAngle: times2[ind][0], toAngle:times2[ind][1], radius: radius+23, center: center, color: colors2[ind], extraSpace: 47, iconName: icons[ind])
+                    ForEach(schedule2.indices, id: \.self) {ind in
+                        ActivityComponent(activity: schedule2[ind], radius: radius+23, center: center, color: Color.darkGreen, extraSpace: 47)
                     }
                     
                 }
                 //.coordinateSpace(name: "slider") // Used by DragGesture to ensure coordinates are relative to the center
             }
-            .frame(width: .infinity, height: 390)
+            .frame(height: 390)
             Spacer()
             Spacer()
             
@@ -161,8 +182,8 @@ struct ScheduleView: View {
     private func getTime() -> String {
         let hour = Calendar.current.component(.hour, from: Date())
         let minute = Calendar.current.component(.minute, from: Date())
-        
-        return "\(hour).\(minute)"
+        let extra = minute < 10 ? "0" : ""
+        return "\(hour).\(extra)\(minute)"
     }
     private func updateClock() {
         currentHourAngle = getTimeAngle()
@@ -199,16 +220,16 @@ struct ScheduleView: View {
     }
     
     /// Computes the delta string between the two points
-    private func getDuration() -> String {
-        let difference = (toAngle - startAngle).truncatingRemainder(dividingBy: 360)
-        let normalizedDiff = difference < 0 ? difference + 360 : difference
-        
-        let totalMinutes = normalizedDiff * 4
-        let hours = Int(totalMinutes / 60)
-        let minutes = Int(totalMinutes.truncatingRemainder(dividingBy: 60))
-        
-        return "\(hours)h \(minutes)m"
-    }
+    //    private func getDuration() -> String {
+    //        let difference = (toAngle - startAngle).truncatingRemainder(dividingBy: 360)
+    //        let normalizedDiff = difference < 0 ? difference + 360 : difference
+    //
+    //        let totalMinutes = normalizedDiff * 4
+    //        let hours = Int(totalMinutes / 60)
+    //        let minutes = Int(totalMinutes.truncatingRemainder(dividingBy: 60))
+    //
+    //        return "\(hours)h \(minutes)m"
+    //    }
     
 }
 
@@ -224,10 +245,13 @@ extension Color {
     }
     
     
-    static let color1 = Color(hex: "#6C757D")
-    static let color2 = Color(hex: "#52b788")
-    static let color3 = Color(hex: "#6b9080")
-    static let color4 = Color(hex: "#2d6a4f")
+    static let clockGray = Color(hex: "#6C757D")
+    static let lightGreen = Color(hex: "#52b788")
+    static let darkGreen = Color(hex: "#2d6a4f")
+    
+    static let lightOrange = Color(hex: "#ffaa00")
+    static let darkOrange = Color(hex: "#ff8500")
+    
     
 }
 
