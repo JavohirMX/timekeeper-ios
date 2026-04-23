@@ -14,7 +14,7 @@ struct ProfileInfo: Identifiable {
     let email: String
     let phNum: String
     let timezoneIdentifier: String 
-    var schedules: [Schedule]
+    var schedules: [Activity]
 }
 
 var userProfile: [ProfileInfo] = [
