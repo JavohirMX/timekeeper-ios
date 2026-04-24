@@ -20,12 +20,12 @@ struct ProfileView: View {
         NavigationStack {
             List{
                 Section {
-                    ProfileComponent(profile: $usersProfile)
+                    ProfileComponent(profile: usersProfile)
                 }
                 .foregroundStyle(.primary)
                 Section {
-                    ForEach($profiles) { profile in
-                        ProfileComponent(profile: profile)
+                    ForEach(profiles.keys.sorted(), id: \.self) { name in
+                        ProfileComponent(profile: profiles[name]!)
                     }
                 }header: {
                     Text("Connections")

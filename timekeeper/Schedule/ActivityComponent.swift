@@ -15,6 +15,7 @@ struct ActivityComponent: View {
     let center: CGPoint
     let color: Color
     let extraSpace: CGFloat
+    let timezone: String
 //    let iconName: String
     
     var body: some View {
@@ -28,7 +29,7 @@ struct ActivityComponent: View {
 //            .fill()
             .stroke(color, style: StrokeStyle(lineWidth: 24, lineCap: .round))
             // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (3 o'clock)
-            .rotationEffect(.degrees(activity.startAngle() - 90))
+            .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 90))
             .frame(width: 258 + extraSpace)
             
             
@@ -37,7 +38,7 @@ struct ActivityComponent: View {
         // Bedtime Knob (Start)
         KnobView(imageName: activity.icon)
             .offset(x: radius-56)
-            .rotationEffect(.degrees(activity.startAngle() - 88))
+            .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 88))
 //            .gesture(
 //                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
 //                    .onChanged { value in
@@ -77,9 +78,8 @@ struct KnobView: View {
 }
 #Preview {
     let activity: Activity = Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0))
-    let toAngle: Double = 120
     let width: CGFloat = 350
     let center = CGPoint(x: width / 2, y: width / 2)
     let radius = width / 2
-    ActivityComponent(activity: activity, radius: radius, center: center, color: Color.blue, extraSpace: 0)
+    ActivityComponent(activity: activity, radius: radius, center: center, color: Color.blue, extraSpace: 0, timezone: TimeZone.current.identifier)
 }

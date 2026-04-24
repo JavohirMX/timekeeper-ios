@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileComponent:View {
-    @Binding var profile: ProfileInfo
+    var profile: ProfileInfo
     var body: some View {
         NavigationLink() {
             ProfileDetails(profile: $profile)
