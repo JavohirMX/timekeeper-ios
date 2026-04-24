@@ -9,8 +9,8 @@ import SwiftUI
 import PhotosUI
 
 struct ProfileView: View {
-    @State private var profiles = defaultProfile
-    @State private var usersProfile = userProfile[0]
+    private var profiles = defaultProfiles
+    private var usersProfile = userProfile[0]
     @State private var presentAddSheet = true
     @State private var presentTimezoneSheet = false
     @State private var name = ""
@@ -24,12 +24,12 @@ struct ProfileView: View {
         NavigationStack {
             List{
                 Section {
-                    ProfileComponent(profile: $usersProfile)
+                    ProfileComponent(profile: usersProfile)
                 }
                 .foregroundStyle(.primary)
                 Section {
-                    ForEach($profiles) { profile in
-                        ProfileComponent(profile: profile)
+                    ForEach(profiles.keys.sorted(), id: \.self) { name in
+                        ProfileComponent(profile: profiles[name]!)
                     }
                 }header: {
                     Text("Connections")

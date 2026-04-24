@@ -13,31 +13,45 @@ struct Activity: Identifiable {
     let startTime: Date
     let endTime: Date
     
-    func startAngle() -> Double {
-        
+    func startAngle(timezone: String = TimeZone.current.identifier) -> Double {
+    
         // 360° maps to 24 hours. Therefore:
         // 15° = 1 hour, 1° = 4 minutes, 1 minute = 0.25°
         // Top (12 o'clock) is 0° mathematically.
-        let hour = Double(Calendar.current.component(.hour, from: startTime))
-        let minute = Double(Calendar.current.component(.minute, from: startTime))
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: timezone)!
+        let components = calendar.dateComponents([.hour, .minute], from: startTime)
+        let hour = Double(components.hour!)
+        let minute = Double(components.minute!)
         let angle = Double(hour * 15 + minute * 0.25)
         
         return angle + 3.75 // + 15 minutes for rounded corner addition
     }
     
-    func toAngle() -> Double {
-        
-        // 360° maps to 24 hours. Therefore:
-        // 15° = 1 hour, 1° = 4 minutes, 1 minute = 0.25°
-        // Top (12 o'clock) is 0° mathematically.
-        let hour = Double(Calendar.current.component(.hour, from: endTime))
-        let minute = Double(Calendar.current.component(.minute, from: endTime))
+    func toAngle(timezone: String = TimeZone.current.identifier) -> Double {
+        var calendar = Calendar.current
+        calendar.timeZone = TimeZone(identifier: timezone)!
+        let components = calendar.dateComponents([.hour, .minute], from: endTime)
+        let hour = Double(components.hour!)
+        let minute = Double(components.minute!)
         let angle = Double(hour * 15 + minute * 0.25)
         
         return angle - 3.75 // - 15 minutes fpr rounded corner
     }
 }
+var defaultSchedule = [
+    Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 4, minute: 0), endTime: timeSetter(hour: 11, minute: 0)),
+    Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
+    Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 18, minute: 30), endTime: timeSetter(hour: 19, minute: 20)),
+    Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
+]
 
-var defaultSchedule: [Activity] = [
-    Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
+var schedules: [String: [Activity]] = [
+    "john" : [
+        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 4, minute: 0), endTime: timeSetter(hour: 11, minute: 0)),
+        Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
+        Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 18, minute: 30), endTime: timeSetter(hour: 19, minute: 20)),
+        Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
+    ],
+    
 ]

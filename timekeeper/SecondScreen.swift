@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct SecondScreen: View {
-    @Binding var profile: ProfileInfo
+    var profile: ProfileInfo
     
     var body: some View {
         List {
@@ -72,9 +72,6 @@ struct SecondScreen: View {
                             }
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                            //to format all the dates in this block using the friend's timezone
-                            .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)
-                                        
                         }
                         Spacer()
                     }
@@ -113,6 +110,6 @@ struct SecondScreen: View {
 }
 
 #Preview {
-    SecondScreen(profile: .constant(defaultProfile[0]))
+    SecondScreen(profile: defaultProfiles["john"]!)
         .preferredColorScheme(.dark)
 }

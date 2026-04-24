@@ -18,8 +18,10 @@ struct ScheduleView: View {
         Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
     ]
     
-    @State private var selection = "You"
-    let friends = ["You", "Micheal"]
+    @State private var selectedProfile: String = "john"
+    let friends = defaultProfiles.map { (key, profile) in
+        (id: key, name: profile.name)
+    }
     
     @State var currentHourAngle: Double = 0
     @State var currentTime: String = "0.00"
@@ -31,6 +33,7 @@ struct ScheduleView: View {
     //        }
     
     var body: some View {
+        
         VStack(spacing: 50) {
             Text("Schedule")
                 .font(.system(size: 36, weight: .bold))
@@ -95,7 +98,7 @@ struct ScheduleView: View {
                     // Clock
                     
                     Circle()
-                        .fill(Color.black)
+                        .fill(Color(.systemBackground))
                         .zIndex(-2)
                         .frame(width: 235)
                     Circle()
@@ -123,18 +126,22 @@ struct ScheduleView: View {
                     // Current Time
                     Text("\(currentTime)")
                         .font(.caption)
-                        .foregroundColor(Color.white)
+                        .foregroundColor(Color.primary)
                         .rotationEffect(.init(degrees: -currentHourAngle))
                         .offset(y: -(width) / 2)
                         .rotationEffect(.degrees(currentHourAngle))
                     
                     // Activities
-                    ForEach(schedule1.indices, id: \.self) {ind in
-                        ActivityComponent(activity: schedule1[ind], radius: radius, center: center, color: Color.lightGreen, extraSpace: 0)
+                    let myProfile = userProfile[0]
+                    let innerCircle = myProfile.schedules
+                    ForEach(innerCircle.indices, id: \.self) {ind in
+                        ActivityComponent(activity: innerCircle[ind], radius: radius, center: center, color: Color.lightGreen, extraSpace: 0, timezone: myProfile.timezoneIdentifier)
                     }
+                    let secondProfile = defaultProfiles[selectedProfile]!
+                    let outerCircle = secondProfile.schedules
                     
-                    ForEach(schedule2.indices, id: \.self) {ind in
-                        ActivityComponent(activity: schedule2[ind], radius: radius+23, center: center, color: Color.darkGreen, extraSpace: 47)
+                    ForEach(outerCircle.indices, id: \.self) {ind in
+                        ActivityComponent(activity: outerCircle[ind], radius: radius+23, center: center, color: Color.darkOrange, extraSpace: 47, timezone: secondProfile.timezoneIdentifier)
                     }
                     
                 }
@@ -143,20 +150,16 @@ struct ScheduleView: View {
             .frame(height: 390)
             Spacer()
             Spacer()
-            
-            // Segmented picker
-            VStack {
-                Picker("Select", selection: $selection) {
-                    ForEach(friends, id: \.self) { friend in
-                        Text(friend).tag(friend)
+            HStack () {
+                Text("Comparing schedule with:")
+                
+                Picker("Select", selection: $selectedProfile) {
+                    ForEach(friends, id: \.id) { friend in
+                        Text(friend.name).tag(friend.id)
                     }
                 }
-                .pickerStyle(.segmented) // Converts the picker to a segmented control
-                
+                .pickerStyle(.menu)
             }
-            .padding()
-            
-            
         }
         .padding()
         .onAppear {

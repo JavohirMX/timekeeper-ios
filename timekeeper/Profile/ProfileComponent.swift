@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct ProfileComponent:View {
-    @Binding var profile: ProfileInfo
+    var profile: ProfileInfo
     var body: some View {
         NavigationLink() {
-            SecondScreen(profile: $profile)
+            SecondScreen(profile: profile)
         }
         label: {
             HStack {

@@ -21,12 +21,12 @@ var userProfile: [ProfileInfo] = [
     ProfileInfo(name: "Ishandeep (Me)", imageName: "Ish", email: "ish.singh@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule)
 ]
 
-var defaultProfile: [ProfileInfo] = [
-    ProfileInfo(name: "Johnny ", imageName: "john", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Asia/Jakarta", schedules: defaultSchedule),
-    ProfileInfo(name: "Nataleen (Telolet)", imageName: "talin", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Australia/Sydney", schedules: defaultSchedule),
-    ProfileInfo(name: "Nathan", imageName: "nathan", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Europe/London", schedules: defaultSchedule),
-    ProfileInfo(name: "Huy Tran", imageName: "huy", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule),
-    ProfileInfo(name: "Nil", imageName: "nil", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule)
+var defaultProfiles: [String: ProfileInfo] = [
+    "john": ProfileInfo(name: "Johnny", imageName: "john", email: "john@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Asia/Tashkent", schedules: schedules["john"] ?? defaultSchedule),
+    "talin": ProfileInfo(name: "Nataleen (Telolet)", imageName: "talin", email: "talin@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Australia/Sydney", schedules: defaultSchedule),
+    "nathan": ProfileInfo(name: "Nathan", imageName: "nathan", email: "nathan@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: "Europe/London", schedules: defaultSchedule),
+    "huy": ProfileInfo(name: "Huy Tran", imageName: "huy", email: "huy@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule),
+    "nil": ProfileInfo(name: "Nil", imageName: "nil", email: "nil@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule)
 ]
 
 
