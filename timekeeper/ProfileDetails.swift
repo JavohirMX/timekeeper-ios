@@ -1,8 +1,8 @@
 
 import SwiftUI
 
-struct SecondScreen: View {
-    var profile: ProfileInfo
+struct ProfileDetails: View {
+    @Binding var profile: ProfileInfo
     
     var body: some View {
         List {
