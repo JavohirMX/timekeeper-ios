@@ -11,13 +11,9 @@ import PhotosUI
 struct ProfileView: View {
     @State private var profiles = defaultProfile
     @State private var usersProfile = userProfile[0]
-    @State private var presentAddSheet = true
-    @State private var presentTimezoneSheet = false
-    @State private var name = ""
-    @State private var email = ""
-    @State private var phone = ""
-    @State private var selectedTimezone = TimeZone.current.identifier
-    @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var presentAddSheet = false
+    
+    
     
     var body: some View {
         
@@ -55,89 +51,9 @@ struct ProfileView: View {
             .tint(.orange)
         }
         .sheet(isPresented: $presentAddSheet) {
-            NavigationStack {
-                ZStack{
-                    VStack {
-                        Image("pfp2")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 244, height: 244)
-                            .clipShape(Circle())
-                        PhotosPicker(selection: $selectedItem, matching: .images) {
-                            Text("Select Image")
-                                .foregroundColor(.primary)
-                                .padding(.vertical, 12)
-                                .padding(.horizontal, 28)
-                                .background(.regularMaterial)
-                                .cornerRadius(24)
-                        }
-                        .padding(.top, 16)
-                        List {
-                            HStack {
-                                Text("Name")
-                                TextField("Enter name", text: $name)
-                                    .multilineTextAlignment(.trailing)
-                            }
-                            
-                            HStack {
-                                Text("Email")
-                                TextField("Enter email", text: $email)
-                                    .multilineTextAlignment(.trailing)
-                            }
-                            
-                            HStack {
-                                Text("Phone")
-                                TextField("Enter phone", text: $phone)
-                                    .multilineTextAlignment(.trailing)
-                            }
-                            HStack {
-                                Text("Timezone")
-                                Spacer()
-                                Text("Asia/Jakarta")
-                                    .foregroundColor(.secondary)
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.secondary)
-                                    .font(.caption)
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                presentTimezoneSheet = true
-                            }
-                            
-                        }
-                    }
-                }
-                
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button (action: {
-                            presentAddSheet.toggle()
-                            name = "";
-                        })  {
-                            Image(systemName: "xmark")
-                            .foregroundColor(.primary)
-                            .clipShape(Circle())
-                        }
-                    }
-                    
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button {
-                            presentAddSheet.toggle()
-                            name = "";
-                        } label: {
-                            Image(systemName: "checkmark")
-                            .foregroundColor(.primary)
-
-                            
-                            
-                        }.buttonStyle(.borderedProminent)
-                            .tint(.orange)
-                            
-                    }
-                }
-            }
+            AddProfileSheet(presentAddSheet: $presentAddSheet, profiles: $profiles)
         }
-        
+
     }
 }
 

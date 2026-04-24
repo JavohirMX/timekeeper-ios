@@ -1,7 +1,7 @@
 
 import SwiftUI
 
-struct SecondScreen: View {
+struct ProfileDetails: View {
     @Binding var profile: ProfileInfo
     
     var body: some View {
@@ -113,6 +113,6 @@ struct SecondScreen: View {
 }
 
 #Preview {
-    SecondScreen(profile: .constant(defaultProfile[0]))
+    ProfileDetails(profile: .constant(defaultProfile[0]))
         .preferredColorScheme(.dark)
 }

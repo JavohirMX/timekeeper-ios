@@ -11,7 +11,7 @@ struct ProfileComponent:View {
     @Binding var profile: ProfileInfo
     var body: some View {
         NavigationLink() {
-            SecondScreen(profile: $profile)
+            ProfileDetails(profile: $profile)
         }
         label: {
             HStack {
