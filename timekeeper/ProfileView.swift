@@ -9,7 +9,7 @@ import SwiftUI
 import PhotosUI
 
 struct ProfileView: View {
-    @State private var profiles = defaultProfile
+    @State private var profiles = defaultProfiles
     @State private var usersProfile = userProfile[0]
     @State private var presentAddSheet = false
     

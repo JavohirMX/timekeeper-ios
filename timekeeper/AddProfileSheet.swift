@@ -19,7 +19,7 @@ struct AddProfileSheet: View {
     @State private var profilesActivities: [Activity] = []
     @State private var presentScheduleSheet = false
     @Binding var presentAddSheet: Bool
-    @Binding var profiles: [ProfileInfo]
+    @Binding var profiles: [String: ProfileInfo]
 
     
     var body: some View {
@@ -146,7 +146,7 @@ struct AddProfileSheet: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
                         let newProfile = ProfileInfo(name: name, imageName: "person.crop.circle", email: email, phNum: phone, timezoneIdentifier: selectedTimezone, schedules: profilesActivities)
-                        profiles.append(newProfile)
+                        profiles[newProfile.name] = newProfile
                         presentAddSheet.toggle()
                     } label: {
                         Image(systemName: "checkmark")

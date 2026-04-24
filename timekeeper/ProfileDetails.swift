@@ -2,7 +2,7 @@
 import SwiftUI
 
 struct ProfileDetails: View {
-    @Binding var profile: ProfileInfo
+    var profile: ProfileInfo
     
     var body: some View {
         List {
@@ -107,9 +107,4 @@ struct ProfileDetails: View {
             }
         }
     }
-}
-
-#Preview {
-    SecondScreen(profile: defaultProfiles["john"]!)
-        .preferredColorScheme(.dark)
 }

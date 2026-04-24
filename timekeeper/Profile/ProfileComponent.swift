@@ -11,7 +11,7 @@ struct ProfileComponent:View {
     var profile: ProfileInfo
     var body: some View {
         NavigationLink() {
-            ProfileDetails(profile: $profile)
+            ProfileDetails(profile: profile)
         }
         label: {
             HStack {
