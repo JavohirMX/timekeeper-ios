@@ -7,46 +7,59 @@
 
 import SwiftUI
 import PhotosUI
+import SwiftData
 
 struct ProfileView: View {
-    @State private var profiles = defaultProfiles
-    @State private var usersProfile = userProfile[0]
+    @Query(filter: #Predicate<ProfileInfo> { $0.isMainUser == true }) var mainUsers: [ProfileInfo]
+    @Query(filter: #Predicate<ProfileInfo> { $0.isMainUser == false }, sort: \ProfileInfo.name) var connections: [ProfileInfo]
+    @Environment(\.modelContext) private var context
     @State private var presentAddSheet = false
+    @State private var creatingMainUser = false
     
     var body: some View {
         
         NavigationStack {
             List{
                 Section {
-                    ProfileComponent(profile: usersProfile, profiles: $profiles, usersProfile: $usersProfile, isMainUser: true)
+                    if let myProfile = mainUsers.first {
+                        ProfileComponent(profile: myProfile, isMainUser: true)
+                    } else {
+                        // If you haven't created your profile yet, show a button to set it up!
+                        Button {
+                            creatingMainUser = true
+                            presentAddSheet.toggle()
+                        } label: {
+                            HStack {
+                                Image(systemName: "person.crop.circle.badge.plus")
+                                Text("Set Up My Profile")
+                            }
+                            .foregroundColor(.orange)
+                        }
+                    }
                 }
-                .foregroundStyle(.primary)
                 Section {
-                    ForEach(profiles.keys.sorted(), id: \.self) { name in
-                        ProfileComponent(profile: profiles[name]!, profiles: $profiles, usersProfile: $usersProfile, isMainUser: false)
-                        
+                    ForEach(connections) { profile in
+                        ProfileComponent(profile: profile, isMainUser: false)
                     }
                     //swipe to delete
                     .onDelete { indexSet in
-                        let sortedKeys = profiles.keys.sorted()
                         for index in indexSet {
-                            profiles.removeValue(forKey: sortedKeys[index])
+                            context.delete(connections[index])
                         }
                     }
                 }header: {
-                    Text("Connections")
-                        .font(.title2)
-                        .bold()
+                    Text("Connections").font(.title2).bold()
                     
                 }
-                .foregroundStyle(.primary)
-                
             }
             .listStyle(.insetGrouped)
             .navigationTitle("Profiles")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { presentAddSheet.toggle() }) {
+                    Button(action: {
+                        creatingMainUser = false
+                        presentAddSheet.toggle()
+                    }) {
                         Image(systemName: "plus")
                     }
                 }
@@ -57,8 +70,8 @@ struct ProfileView: View {
             .tint(.orange)
         }
         .sheet(isPresented: $presentAddSheet) {
-            AddProfileSheet(presentAddSheet: $presentAddSheet, profiles: $profiles, usersProfile: $usersProfile)
-        }
+            AddProfileSheet(isMainUser: $creatingMainUser, presentAddSheet: $presentAddSheet)
+            }        
 
     }
 }

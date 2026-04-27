@@ -1,27 +1,28 @@
-
-
 import SwiftUI
+import SwiftData
 
 struct ScheduleView: View {
-    
-    var schedule1: [Activity] = [
-        Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
-        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 23, minute: 0), endTime: timeSetter(hour: 7, minute: 0)),
-        Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 12, minute: 20), endTime: timeSetter(hour: 13, minute: 10)),
-        Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 8, minute: 0), endTime: timeSetter(hour: 12, minute: 0)),
-    ]
-    
-    var schedule2: [Activity] = [
-        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 4, minute: 0), endTime: timeSetter(hour: 11, minute: 0)),
-        Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
-        Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 18, minute: 30), endTime: timeSetter(hour: 19, minute: 20)),
-        Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
-    ]
-    
-    @State private var selectedProfile: String = "john"
-    let friends = defaultProfiles.map { (key, profile) in
-        (id: key, name: profile.name)
-    }
+    @Query(filter: #Predicate<ProfileInfo> { $0.isMainUser == true }) var mainUsers: [ProfileInfo]
+    @Query(filter: #Predicate<ProfileInfo> { $0.isMainUser == false }, sort: \ProfileInfo.name) var connections: [ProfileInfo]
+//    var schedule1: [Activity] = [
+//        Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
+//        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 23, minute: 0), endTime: timeSetter(hour: 7, minute: 0)),
+//        Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 12, minute: 20), endTime: timeSetter(hour: 13, minute: 10)),
+//        Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 8, minute: 0), endTime: timeSetter(hour: 12, minute: 0)),
+//    ]
+//    
+//    var schedule2: [Activity] = [
+//        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 4, minute: 0), endTime: timeSetter(hour: 11, minute: 0)),
+//        Activity(title: "Study", icon: "text.book.closed.fill", startTime: timeSetter(hour: 14, minute: 0), endTime: timeSetter(hour: 18, minute: 0)),
+//        Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 18, minute: 30), endTime: timeSetter(hour: 19, minute: 20)),
+//        Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
+//    ]
+//    
+    //@State private var selectedProfile: String = "john"
+//    let friends = defaultProfiles.map { (key, profile) in
+//        (id: key, name: profile.name)
+//    }
+    @State private var selectedProfileId: UUID? = nil
     
     @State var currentHourAngle: Double = 0
     @State var currentTime: String = "0.00"
@@ -132,16 +133,36 @@ struct ScheduleView: View {
                         .rotationEffect(.degrees(currentHourAngle))
                     
                     // Activities
-                    let myProfile = userProfile[0]
-                    let innerCircle = myProfile.schedules
-                    ForEach(innerCircle.indices, id: \.self) {ind in
-                        ActivityComponent(activity: innerCircle[ind], radius: radius, center: center, color: Color.lightGreen, extraSpace: 0, timezone: myProfile.timezoneIdentifier)
+                    // 1. Draw Your Schedule (Inner Circle)
+                    if let myProfile = mainUsers.first {
+                        let innerCircle = myProfile.schedules
+                        ForEach(innerCircle) { activity in
+                            ActivityComponent(
+                                activity: activity,
+                                radius: radius,
+                                center: center,
+                                color: Color.lightGreen,
+                                extraSpace: 0,
+                                timezone: myProfile.timezoneIdentifier
+                            )
+                        }
                     }
-                    let secondProfile = defaultProfiles[selectedProfile]!
-                    let outerCircle = secondProfile.schedules
                     
-                    ForEach(outerCircle.indices, id: \.self) {ind in
-                        ActivityComponent(activity: outerCircle[ind], radius: radius+23, center: center, color: Color.darkOrange, extraSpace: 47, timezone: secondProfile.timezoneIdentifier)
+                    // 2. Draw Friend's Schedule (Outer Circle)
+                    if let selectedId = selectedProfileId,
+                       let secondProfile = connections.first(where: { $0.id == selectedId }) {
+                        
+                        let outerCircle = secondProfile.schedules
+                        ForEach(outerCircle) { activity in
+                            ActivityComponent(
+                                activity: activity,
+                                radius: radius + 23,
+                                center: center,
+                                color: Color.darkOrange,
+                                extraSpace: 47,
+                                timezone: secondProfile.timezoneIdentifier
+                            )
+                        }
                     }
                     
                 }
@@ -150,12 +171,15 @@ struct ScheduleView: View {
             .frame(height: 390)
             Spacer()
             Spacer()
-            HStack () {
+            HStack {
                 Text("Comparing schedule with:")
                 
-                Picker("Select", selection: $selectedProfile) {
-                    ForEach(friends, id: \.id) { friend in
-                        Text(friend.name).tag(friend.id)
+                Picker("Select", selection: $selectedProfileId) {
+                    Text("None").tag(UUID?(nil)) // A default blank option
+                    
+                    //loop through live connections
+                    ForEach(connections) { friend in
+                        Text(friend.name).tag(UUID?(friend.id))
                     }
                 }
                 .pickerStyle(.menu)
@@ -167,6 +191,9 @@ struct ScheduleView: View {
             Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                 updateClock()
             }
+            if selectedProfileId == nil {
+                    selectedProfileId = connections.first?.id
+                }
         }
     }
     

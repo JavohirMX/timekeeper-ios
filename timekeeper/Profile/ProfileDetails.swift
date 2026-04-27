@@ -3,8 +3,6 @@ import SwiftUI
 
 struct ProfileDetails: View {
     var profile: ProfileInfo
-    @Binding var profiles: [String: ProfileInfo]
-    @Binding var usersProfile: ProfileInfo
     var isMainUser: Bool
     @State private var showEditSheet = false
     
@@ -35,7 +33,7 @@ struct ProfileDetails: View {
                     VStack(spacing: -5) {
                         Text(Date(), style: .time)
                             .font(.system(size: 60, weight: .light))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.primary)
                             .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)
                         Text("Local Time")
                             .font(.subheadline)
@@ -45,7 +43,7 @@ struct ProfileDetails: View {
                     }
                 }
                 .frame(maxWidth: .infinity)//to centre the v stack to the middle of the page
-                .listRowBackground(Color.black) //to change this individual list row background and not the others
+                .listRowBackground(Color.clear) //to change this individual list row background and not the others
             }
             
             Section {
@@ -121,13 +119,11 @@ struct ProfileDetails: View {
             }
         }
         .sheet(isPresented: $showEditSheet) {
-                    AddProfileSheet(
-                        existingProfile: profile,
-                        isMainUser: isMainUser,
-                        presentAddSheet: $showEditSheet,
-                        profiles: $profiles,
-                        usersProfile: $usersProfile
-                    )
-                }
+            AddProfileSheet(
+                existingProfile: profile,
+                isMainUser: .constant(isMainUser),
+                presentAddSheet: $showEditSheet
+            )
+        }
     }
 }

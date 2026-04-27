@@ -9,14 +9,10 @@ import SwiftUI
 
 struct ProfileComponent:View {
     var profile: ProfileInfo
-    @Binding var profiles: [String: ProfileInfo]
-    @Binding var usersProfile: ProfileInfo // 👈 Add this
     var isMainUser: Bool
     var body: some View {
         NavigationLink() {
             ProfileDetails(profile: profile,
-                           profiles: $profiles,
-                           usersProfile: $usersProfile,
                            isMainUser: isMainUser)
                     }
         label: {

@@ -7,10 +7,11 @@
 
 import SwiftUI
 import PhotosUI
+import SwiftData
 
 struct AddProfileSheet: View {
     var existingProfile: ProfileInfo? = nil
-    var isMainUser: Bool = false //
+    @Binding var isMainUser: Bool
     @State private var selectedImage : Image? = nil
     @State private var selectedItem: PhotosPickerItem? = nil
     
@@ -24,9 +25,8 @@ struct AddProfileSheet: View {
     )
     
     @State private var presentScheduleSheet = false
+    @Environment(\.modelContext) private var context
     @Binding var presentAddSheet: Bool
-    @Binding var profiles: [String: ProfileInfo]
-    @Binding var usersProfile: ProfileInfo
 
     
     var body: some View {
@@ -158,16 +158,20 @@ struct AddProfileSheet: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        if isMainUser {
-                            usersProfile = profile
+                        if let existing = existingProfile {
+                            existing.name = profile.name
+                            existing.email = profile.email
+                            existing.phNum = profile.phNum
+                            existing.timezoneIdentifier = profile.timezoneIdentifier
+                            existing.imageData = profile.imageData
+                            existing.schedules = profile.schedules
                         } else {
-                            //if user changes name while editing, delete  old dictionary key
-                            if let existing = existingProfile, let oldKey = profiles.first(where: { $0.value.id == existing.id })?.key {
-                                profiles.removeValue(forKey: oldKey)
-                            }
-                            profiles[profile.name] = profile
+                            profile.isMainUser = isMainUser
+                            context.insert(profile)
                         }
+                        
                         presentAddSheet.toggle()
+                        
                     } label: {
                         Image(systemName: "checkmark")
                             .foregroundColor(.primary)

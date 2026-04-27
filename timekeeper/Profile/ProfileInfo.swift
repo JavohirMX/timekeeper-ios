@@ -18,8 +18,9 @@ class ProfileInfo: Identifiable {
     var timezoneIdentifier: String
     var schedules: [Activity]
     var imageData: Data? = nil
+    var isMainUser: Bool = false
     
-    init(id: UUID = UUID(), name: String, imageName: String, email: String, phNum: String, timezoneIdentifier: String, schedules: [Activity] = [], imageData: Data? = nil) {
+    init(id: UUID = UUID(), name: String, imageName: String, email: String, phNum: String, timezoneIdentifier: String, schedules: [Activity] = [], imageData: Data? = nil, isMainUser: Bool = false) {
         self.id = id
         self.name = name
         self.imageName = imageName
@@ -28,6 +29,7 @@ class ProfileInfo: Identifiable {
         self.timezoneIdentifier = timezoneIdentifier
         self.schedules = schedules
         self.imageData = imageData
+        self.isMainUser = isMainUser
     }
 }
 
