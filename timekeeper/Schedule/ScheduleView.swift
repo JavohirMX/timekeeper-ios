@@ -36,9 +36,17 @@ struct ScheduleView: View {
     var body: some View {
         
         VStack(spacing: 50) {
-            Text("Schedule")
-                .font(.system(size: 36, weight: .bold))
-                .frame(maxWidth: .infinity, alignment: .leading)
+            VStack(alignment: .leading, spacing: 4) {
+                Text("Schedule")
+                    .font(.system(size: 36, weight: .bold))
+                
+                // 👇 Adds the current date (e.g., "Monday, April 27")
+                Text(Date(), style: .date)
+                    .font(.headline)
+                    .foregroundColor(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal)
             
             
             // MARK: - Circular Slider
@@ -186,7 +194,7 @@ struct ScheduleView: View {
             Spacer()
             Spacer()
             HStack {
-                Text("Comparing schedule with:")
+                Text("Comparing schedule with:").foregroundColor(.secondary)
                 
                 Picker("Select", selection: $selectedProfileId) {
                     Text("None").tag(UUID?(nil)) // A default blank option
@@ -197,7 +205,14 @@ struct ScheduleView: View {
                     }
                 }
                 .pickerStyle(.menu)
+                .tint(.orange)
+                    .bold()
             }
+            .padding(.vertical, 12)
+            .padding(.horizontal, 20)
+            .background(Color(.systemGray6))
+            .clipShape(Capsule())
+            .padding(.bottom, 20)
         }
         .padding()
         .onAppear {
