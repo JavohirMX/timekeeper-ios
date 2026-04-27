@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import SwiftData
 
-struct ProfileInfo: Identifiable {
-    let id = UUID()
+@Model
+class ProfileInfo: Identifiable {
+    var id = UUID()
     var name: String
     var imageName: String
     var email: String
@@ -16,6 +18,17 @@ struct ProfileInfo: Identifiable {
     var timezoneIdentifier: String
     var schedules: [Activity]
     var imageData: Data? = nil
+    
+    init(id: UUID = UUID(), name: String, imageName: String, email: String, phNum: String, timezoneIdentifier: String, schedules: [Activity] = [], imageData: Data? = nil) {
+        self.id = id
+        self.name = name
+        self.imageName = imageName
+        self.email = email
+        self.phNum = phNum
+        self.timezoneIdentifier = timezoneIdentifier
+        self.schedules = schedules
+        self.imageData = imageData
+    }
 }
 
 var userProfile: [ProfileInfo] = [

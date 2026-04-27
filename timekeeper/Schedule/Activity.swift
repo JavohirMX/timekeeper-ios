@@ -5,13 +5,23 @@
 //  Created by Ishandeep Singh on 21/04/26.
 //
 import SwiftUI
+import SwiftData
 
-struct Activity: Identifiable {
-    let id = UUID()
-    let title: String
-    let icon: String
-    let startTime: Date
-    let endTime: Date
+@Model
+class Activity: Identifiable {
+    var id = UUID()
+    var title: String
+    var icon: String
+    var startTime: Date
+    var endTime: Date
+    
+    init(id: UUID = UUID(), title: String, icon: String, startTime: Date, endTime: Date) {
+            self.id = id
+            self.title = title
+            self.icon = icon
+            self.startTime = startTime
+            self.endTime = endTime
+        }
     
     
     func startAngle(timezone: String = TimeZone.current.identifier) -> Double {
