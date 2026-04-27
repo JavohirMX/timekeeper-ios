@@ -133,6 +133,8 @@ struct ScheduleView: View {
                         .rotationEffect(.degrees(currentHourAngle))
                     
                     // Activities
+                    
+                    
                     // 1. Draw Your Schedule (Inner Circle)
                     if let myProfile = mainUsers.first {
                         let innerCircle = myProfile.schedules
@@ -166,13 +168,17 @@ struct ScheduleView: View {
                     }
                     
                     // Mutual free times
-                    let mutualFreeTimes = getMutualFreeTimes(my: myProfile, other: secondProfile)
-                    
-                    if !mutualFreeTimes.isEmpty {
-                        ForEach(mutualFreeTimes.indices, id: \.self) {ind in
-                            ActivityComponent(activity: mutualFreeTimes[ind], radius: radius, center: center, color: Color.orange.opacity(0.3), extraSpace: 25, timezone: myProfile.timezoneIdentifier)
+                    if let myProfile = mainUsers.first, let selectedId = selectedProfileId,
+                       let secondProfile = connections.first(where: { $0.id == selectedId }) {
+                        let mutualFreeTimes = getMutualFreeTimes(my: myProfile, other: secondProfile)
+                        
+                        if !mutualFreeTimes.isEmpty {
+                            ForEach(mutualFreeTimes.indices, id: \.self) {ind in
+                                ActivityComponent(activity: mutualFreeTimes[ind], radius: radius, center: center, color: Color.orange.opacity(0.3), extraSpace: 25, timezone: myProfile.timezoneIdentifier)
+                            }
                         }
                     }
+                    
                 }
                 //.coordinateSpace(name: "slider") // Used by DragGesture to ensure coordinates are relative to the center
             }
