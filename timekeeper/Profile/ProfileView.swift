@@ -24,7 +24,6 @@ struct ProfileView: View {
                     if let myProfile = mainUsers.first {
                         ProfileComponent(profile: myProfile, isMainUser: true)
                     } else {
-                        // If you haven't created your profile yet, show a button to set it up!
                         Button {
                             creatingMainUser = true
                             presentAddSheet.toggle()

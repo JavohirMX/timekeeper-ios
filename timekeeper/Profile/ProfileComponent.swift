@@ -37,10 +37,12 @@ struct ProfileComponent:View {
                 .padding(.trailing, 5)
                 VStack(alignment: .leading){
                     Text(profile.name).font(.title2).fontWeight(.bold)
-                    Text(Date(), style: .time)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                    TimelineView(.periodic(from: .now, by: 1)) { context in
+                        Text(Date(), style: .time)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
                         .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)                }
+                }
                 Spacer()
             }
         }

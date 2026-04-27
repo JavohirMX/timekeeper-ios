@@ -31,10 +31,13 @@ struct ProfileDetails: View {
                         .bold()
                     
                     VStack(spacing: -5) {
-                        Text(Date(), style: .time)
-                            .font(.system(size: 60, weight: .light))
-                            .foregroundStyle(.primary)
-                            .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)
+                        //timeline view to constantly sync time
+                        TimelineView(.periodic(from: .now, by: 1)) { context in
+                            Text(Date(), style: .time)
+                                .font(.system(size: 60, weight: .light))
+                                .foregroundStyle(.primary)
+                                .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)
+                        }
                         Text("Local Time")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
@@ -93,21 +96,23 @@ struct ProfileDetails: View {
                 Text("Schedule")
             }
             
-            Section {
-                Button {/* TODO:ACTION!!!! */} label: {
-                    HStack {
-                        Spacer()
-                        Image(systemName: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
-                        Text("Compare Schedule")
-                            .font(.headline)
-                            .bold()
-                        Spacer()
-                    }
-                    .padding(.vertical, 6)
-                }
-                .listRowBackground(Color.orange)
-                .foregroundStyle(.white)
-            }
+            //            Section {
+            //                NavigationLink {
+            //                    ScheduleView()
+            //                } label: {
+            //                    HStack {
+            //                        Spacer()
+            //                        Image(systemName: "clock.arrow.trianglehead.2.counterclockwise.rotate.90")
+            //                        Text("Compare Schedule")
+            //                            .font(.headline)
+            //                            .bold()
+            //                        Spacer()
+            //                    }
+            //                    .padding(.vertical, 6)
+            //                }
+            //                .listRowBackground(Color.orange)
+            //                .foregroundStyle(.white)
+            //            }
         }
         .listStyle(.insetGrouped)
         .toolbar {
