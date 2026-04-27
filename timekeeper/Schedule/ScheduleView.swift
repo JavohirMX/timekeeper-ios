@@ -40,7 +40,6 @@ struct ScheduleView: View {
                 Text("Schedule")
                     .font(.system(size: 36, weight: .bold))
                 
-                // 👇 Adds the current date (e.g., "Monday, April 27")
                 Text(Date(), style: .date)
                     .font(.headline)
                     .foregroundColor(.secondary)
