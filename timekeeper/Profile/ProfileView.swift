@@ -18,12 +18,20 @@ struct ProfileView: View {
         NavigationStack {
             List{
                 Section {
-                    ProfileComponent(profile: usersProfile, profiles: $profiles)
+                    ProfileComponent(profile: usersProfile, profiles: $profiles, usersProfile: $usersProfile, isMainUser: true)
                 }
                 .foregroundStyle(.primary)
                 Section {
                     ForEach(profiles.keys.sorted(), id: \.self) { name in
-                        ProfileComponent(profile: profiles[name]!, profiles: $profiles)
+                        ProfileComponent(profile: profiles[name]!, profiles: $profiles, usersProfile: $usersProfile, isMainUser: false)
+                        
+                    }
+                    //swipe to delete
+                    .onDelete { indexSet in
+                        let sortedKeys = profiles.keys.sorted()
+                        for index in indexSet {
+                            profiles.removeValue(forKey: sortedKeys[index])
+                        }
                     }
                 }header: {
                     Text("Connections")
@@ -49,7 +57,7 @@ struct ProfileView: View {
             .tint(.orange)
         }
         .sheet(isPresented: $presentAddSheet) {
-            AddProfileSheet(presentAddSheet: $presentAddSheet, profiles: $profiles)
+            AddProfileSheet(presentAddSheet: $presentAddSheet, profiles: $profiles, usersProfile: $usersProfile)
         }
 
     }

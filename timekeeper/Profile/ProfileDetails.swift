@@ -4,17 +4,29 @@ import SwiftUI
 struct ProfileDetails: View {
     var profile: ProfileInfo
     @Binding var profiles: [String: ProfileInfo]
+    @Binding var usersProfile: ProfileInfo
+    var isMainUser: Bool
     @State private var showEditSheet = false
     
     var body: some View {
         List {
             Section {
                 VStack(spacing: 12) {
-                    Image(profile.imageName)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 180, height: 180)
-                        .clipShape(Circle())
+                    Group {
+                        if let data = profile.imageData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                        } else {
+                            Image(profile.imageName)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                        }
+                    }
                     
                     Text(profile.name)
                         .font(.title)
@@ -111,8 +123,10 @@ struct ProfileDetails: View {
         .sheet(isPresented: $showEditSheet) {
                     AddProfileSheet(
                         existingProfile: profile,
+                        isMainUser: isMainUser,
                         presentAddSheet: $showEditSheet,
-                        profiles: $profiles
+                        profiles: $profiles,
+                        usersProfile: $usersProfile
                     )
                 }
     }

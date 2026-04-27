@@ -15,6 +15,7 @@ struct ProfileInfo: Identifiable {
     var phNum: String
     var timezoneIdentifier: String
     var schedules: [Activity]
+    var imageData: Data? = nil
 }
 
 var userProfile: [ProfileInfo] = [
