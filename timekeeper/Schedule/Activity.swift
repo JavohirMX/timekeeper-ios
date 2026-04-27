@@ -36,7 +36,7 @@ struct Activity: Identifiable {
         let minute = Double(components.minute!)
         let angle = Double(hour * 15 + minute * 0.25)
         
-        return angle - 3.75 // - 15 minutes fpr rounded corner
+        return angle - 3.75 // - 15 minutes for rounded corner
     }
 }
 var defaultSchedule = [
@@ -53,5 +53,12 @@ var schedules: [String: [Activity]] = [
         Activity(title: "Lunch", icon: "fork.knife", startTime: timeSetter(hour: 18, minute: 30), endTime: timeSetter(hour: 19, minute: 20)),
         Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
     ],
+    "nathan" : [
+        Activity(title: "Sleep", icon: "moon.fill", startTime: timeSetter(hour: 23, minute: 30), endTime: timeSetter(hour: 7, minute: 30)),
+        Activity(title: "Breakfast", icon: "fork.knife", startTime: timeSetter(hour: 7, minute: 50), endTime: timeSetter(hour: 8, minute: 30)),
+        Activity(title: "Uni work", icon: "briefcase.fill", startTime: timeSetter(hour: 9, minute: 0), endTime: timeSetter(hour: 11, minute: 30)),
+        Activity(title: "Academy", icon: "text.book.closed.fill", startTime: timeSetter(hour: 13, minute: 0), endTime: timeSetter(hour: 17, minute: 0)),
+        Activity(title: "Gym", icon: "dumbbell.fill", startTime: timeSetter(hour: 19, minute: 0), endTime: timeSetter(hour: 20, minute: 30)),
+    ]
     
 ]

@@ -9,43 +9,56 @@ import SwiftUI
 
 struct ActivityComponent: View {
     var activity: Activity
-//    var startAngle: Double
-//    var toAngle: Double
+    //    var startAngle: Double
+    //    var toAngle: Double
     let radius: CGFloat
     let center: CGPoint
     let color: Color
     let extraSpace: CGFloat
     let timezone: String
-//    let iconName: String
-    
+    //    let iconName: String
+    @State private var showPopover = false
     var body: some View {
         // Highlighted Sleep Track
         // Calculate the difference, normalizing negative values so it properly wraps around midnight
         let difference = (activity.toAngle() - activity.startAngle()).truncatingRemainder(dividingBy: 360)
         let normalizedDiff = difference < 0 ? difference + 360 : difference
-        
+        let startTime = Text(activity.startTime, style: .time)
+        let endTime = Text(activity.endTime, style: .time)
+
         Circle()
             .trim(from: 0, to: normalizedDiff / 360)
-//            .fill()
-            .stroke(color, style: StrokeStyle(lineWidth: 24, lineCap: .round))
-            // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (3 o'clock)
+//                    .fill()
+            .stroke(color, style: StrokeStyle(lineWidth: showPopover ? 28 : 24, lineCap: .round))
+        // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (6 o'clock)
             .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 90))
             .frame(width: 258 + extraSpace)
-            
-            
-        
+            .onTapGesture {
+                showPopover.toggle()
+            }
+            .confirmationDialog(
+                "\(activity.title)",
+                isPresented: $showPopover,
+                titleVisibility: .visible
+            ) {
+                
+            } message: {
+                Image(systemName: "clock")
+                Text("\(startTime) - \(endTime)")
+            }
+
         
         // Bedtime Knob (Start)
         KnobView(imageName: activity.icon)
             .offset(x: radius-56)
             .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 88))
-//            .gesture(
-//                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
-//                    .onChanged { value in
-//                        startAngle = getAngle(location: value.location, center: center)
-//                    }
-//            )
-
+        //            .gesture(
+        //                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
+        //                    .onChanged { value in
+        //                        startAngle = getAngle(location: value.location, center: center)
+        //                    }
+        //            )
+        
     }
     /// Converts a dragged coordinate back into an angle mapped strictly between 0° and 360°
     private func getAngle(location: CGPoint, center: CGPoint) -> Double {
@@ -69,7 +82,7 @@ struct KnobView: View {
             .font(.system(size: 18, weight: .bold))
             .foregroundColor(.primary)
             .frame(width: 40, height: 40)
-//                    .background(Color.white)
+        //                    .background(Color.white)
             .clipShape(Circle())
         // Keeps the icon from rotating upside down even though its container is rotated
             .rotationEffect(.degrees(90))
