@@ -9,14 +9,19 @@ import SwiftUI
 import PhotosUI
 
 struct AddProfileSheet: View {
-    @State private var name = ""
-    @State private var email = ""
-    @State private var phone = ""
+    var existingProfile: ProfileInfo? = nil
     @State private var selectedImage : Image? = nil
-    @State private var selectedTimezone = TimeZone.current.identifier
     @State private var selectedItem: PhotosPickerItem? = nil
-    @State private var selectedIcon = "pfp2"
-    @State private var profilesActivities: [Activity] = []
+    
+    @State private var profile = ProfileInfo(
+        name: "",
+        imageName: "pfp2",
+        email: "",
+        phNum: "",
+        timezoneIdentifier: TimeZone.current.identifier,
+        schedules: []
+    )
+    
     @State private var presentScheduleSheet = false
     @Binding var presentAddSheet: Bool
     @Binding var profiles: [String: ProfileInfo]
@@ -33,7 +38,7 @@ struct AddProfileSheet: View {
                             .frame(width: 244, height: 244)
                             .clipShape(Circle())
                     } else {
-                        Image("pfp2")
+                        Image(profile.imageName)
                             .resizable()
                             .scaledToFit()
                             .frame(width: 244, height: 244)
@@ -62,40 +67,40 @@ struct AddProfileSheet: View {
                         Section{
                             HStack {
                                 Text("Name")
-                                TextField("Enter name", text: $name)
+                                TextField("Enter name", text: $profile.name)
                                     .multilineTextAlignment(.trailing)
                             }
                             
                             HStack {
                                 Text("Email")
-                                TextField("Enter email", text: $email)
+                                TextField("Enter email", text: $profile.email)
                                     .keyboardType(.emailAddress)
                                     .multilineTextAlignment(.trailing)
                             }
                             
                             HStack {
                                 Text("Phone")
-                                TextField("Enter phone", text: $phone)
+                                TextField("Enter phone", text: $profile.phNum)
                                     .keyboardType(.numberPad)
                                     .multilineTextAlignment(.trailing)
                             }
                             NavigationLink() {
-                                TimezoneSheet(selectedTimezone: $selectedTimezone)
+                                TimezoneSheet(selectedTimezone: $profile.timezoneIdentifier)
                             } label: {
                                 HStack {
                                     Text("Timezone")
                                     Spacer()
-                                    Text(formatTimezoneName(selectedTimezone))
+                                    Text(formatTimezoneName(profile.timezoneIdentifier))
                                         .foregroundColor(.secondary)
                                 }
                             }
                         }
                         Section{
-                            ForEach(profilesActivities) { activity in
+                            ForEach(profile.schedules) { activity in
                                 HStack {
                                     Button {
                                         withAnimation {
-                                            profilesActivities.removeAll { $0.id == activity.id }
+                                            profile.schedules.removeAll { $0.id == activity.id }
                                         }
                                     } label: {
                                         Image(systemName: "minus.circle.fill").foregroundStyle(.red)
@@ -128,14 +133,20 @@ struct AddProfileSheet: View {
                     }
                 }
             }
-            .navigationTitle("New Profile")
+            .navigationTitle(existingProfile == nil ? "New Profile" : "Edit Profile") //change title depending if there is  existingProfile
             .navigationBarTitleDisplayMode(.inline)
+            
+            // load data when view opens
+            .onAppear {
+                if let existing = existingProfile {
+                    profile = existing
+                }
+            }
             
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button (action: {
                         presentAddSheet.toggle()
-                        name = "";
                     })  {
                         Image(systemName: "xmark")
                             .foregroundColor(.primary)
@@ -145,8 +156,12 @@ struct AddProfileSheet: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        let newProfile = ProfileInfo(name: name, imageName: "person.crop.circle", email: email, phNum: phone, timezoneIdentifier: selectedTimezone, schedules: profilesActivities)
-                        profiles[newProfile.name] = newProfile
+                        //if user changes name while editing, delete  old dictionary key
+                        if let existing = existingProfile, existing.name != profile.name {
+                            profiles.removeValue(forKey: existing.name)
+                        }
+                        
+                        profiles[profile.name] = profile
                         presentAddSheet.toggle()
                     } label: {
                         Image(systemName: "checkmark")
@@ -156,13 +171,13 @@ struct AddProfileSheet: View {
                         
                     }.buttonStyle(.borderedProminent)
                         .tint(.orange)
-                        .disabled(name.isEmpty)
+                        .disabled(profile.name.isEmpty)
                     
                 }
             }
         }
         .sheet(isPresented: $presentScheduleSheet) {
-                ScheduleSheet(presentSheet: $presentScheduleSheet, schedule: $profilesActivities)
+                ScheduleSheet(presentSheet: $presentScheduleSheet, schedule: $profile.schedules)
             
         }
     }

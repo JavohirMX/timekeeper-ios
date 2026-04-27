@@ -13,6 +13,7 @@ struct Activity: Identifiable {
     let startTime: Date
     let endTime: Date
     
+    
     func startAngle(timezone: String = TimeZone.current.identifier) -> Double {
     
         // 360° maps to 24 hours. Therefore:

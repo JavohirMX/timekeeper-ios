@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ProfileInfo: Identifiable {
     let id = UUID()
-    let name: String
-    let imageName: String
-    let email: String
-    let phNum: String
-    let timezoneIdentifier: String 
+    var name: String
+    var imageName: String
+    var email: String
+    var phNum: String
+    var timezoneIdentifier: String
     var schedules: [Activity]
 }
 
@@ -28,5 +28,4 @@ var defaultProfiles: [String: ProfileInfo] = [
     "huy": ProfileInfo(name: "Huy Tran", imageName: "huy", email: "huy@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule),
     "nil": ProfileInfo(name: "Nil", imageName: "nil", email: "nil@gmail.com", phNum: "+65 9123 4567", timezoneIdentifier: TimeZone.current.identifier, schedules: defaultSchedule)
 ]
-
 
