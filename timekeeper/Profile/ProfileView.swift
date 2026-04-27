@@ -13,19 +13,17 @@ struct ProfileView: View {
     @State private var usersProfile = userProfile[0]
     @State private var presentAddSheet = false
     
-    
-    
     var body: some View {
         
         NavigationStack {
             List{
                 Section {
-                    ProfileComponent(profile: usersProfile)
+                    ProfileComponent(profile: usersProfile, profiles: $profiles)
                 }
                 .foregroundStyle(.primary)
                 Section {
                     ForEach(profiles.keys.sorted(), id: \.self) { name in
-                        ProfileComponent(profile: profiles[name]!)
+                        ProfileComponent(profile: profiles[name]!, profiles: $profiles)
                     }
                 }header: {
                     Text("Connections")

@@ -3,6 +3,8 @@ import SwiftUI
 
 struct ProfileDetails: View {
     var profile: ProfileInfo
+    @Binding var profiles: [String: ProfileInfo]
+    @State private var showEditSheet = false
     
     var body: some View {
         List {
@@ -101,10 +103,17 @@ struct ProfileDetails: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit") {
-                    print("Edit button tapped")
+                    showEditSheet.toggle()
                 }
                 .tint(.orange)
             }
         }
+        .sheet(isPresented: $showEditSheet) {
+                    AddProfileSheet(
+                        existingProfile: profile,
+                        presentAddSheet: $showEditSheet,
+                        profiles: $profiles
+                    )
+                }
     }
 }

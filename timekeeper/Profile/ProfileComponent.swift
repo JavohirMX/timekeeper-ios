@@ -9,9 +9,10 @@ import SwiftUI
 
 struct ProfileComponent:View {
     var profile: ProfileInfo
+    @Binding var profiles: [String: ProfileInfo]
     var body: some View {
         NavigationLink() {
-            ProfileDetails(profile: profile)
+            ProfileDetails(profile: profile, profiles: $profiles)
         }
         label: {
             HStack {
