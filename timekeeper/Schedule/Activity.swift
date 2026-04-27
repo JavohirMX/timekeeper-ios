@@ -25,7 +25,9 @@ struct Activity: Identifiable {
         let hour = Double(components.hour!)
         let minute = Double(components.minute!)
         let angle = Double(hour * 15 + minute * 0.25)
-        
+        if self.title == "Free time"{
+            return angle + 1
+        }
         return angle + 3.75 // + 15 minutes for rounded corner addition
     }
     
@@ -36,7 +38,9 @@ struct Activity: Identifiable {
         let hour = Double(components.hour!)
         let minute = Double(components.minute!)
         let angle = Double(hour * 15 + minute * 0.25)
-        
+        if self.title == "Free time"{
+            return angle - 1
+        }
         return angle - 3.75 // - 15 minutes for rounded corner
     }
 }

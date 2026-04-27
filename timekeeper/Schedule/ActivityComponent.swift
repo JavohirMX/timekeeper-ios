@@ -25,39 +25,64 @@ struct ActivityComponent: View {
         let normalizedDiff = difference < 0 ? difference + 360 : difference
         let startTime = Text(activity.startTime, style: .time)
         let endTime = Text(activity.endTime, style: .time)
-
-        Circle()
-            .trim(from: 0, to: normalizedDiff / 360)
-//                    .fill()
-            .stroke(color, style: StrokeStyle(lineWidth: showPopover ? 28 : 24, lineCap: .round))
-        // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (6 o'clock)
-            .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 90))
-            .frame(width: 258 + extraSpace)
-            .onTapGesture {
-                showPopover.toggle()
-            }
-            .confirmationDialog(
-                "\(activity.title)",
-                isPresented: $showPopover,
-                titleVisibility: .visible
-            ) {
-                
-            } message: {
-                Image(systemName: "clock")
-                Text("\(startTime) - \(endTime)")
-            }
-
         
-        // Bedtime Knob (Start)
-        KnobView(imageName: activity.icon)
-            .offset(x: radius-56)
-            .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 88))
-        //            .gesture(
-        //                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
-        //                    .onChanged { value in
-        //                        startAngle = getAngle(location: value.location, center: center)
-        //                    }
-        //            )
+        if activity.title == "Free time" {
+            Circle()
+                .trim(from: 0, to: normalizedDiff / 360)
+    //                    .fill()
+                .stroke(color, style: StrokeStyle(lineWidth: showPopover ? 54 : 48, lineCap: .butt))
+            // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (6 o'clock)
+                .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 90))
+                .frame(width: 258 + extraSpace)
+                .onTapGesture {
+                    showPopover.toggle()
+                }
+                .confirmationDialog(
+                    "\(activity.title)",
+                    isPresented: $showPopover,
+                    titleVisibility: .visible
+                ) {
+                    
+                } message: {
+                    Image(systemName: "clock")
+                    Text("\(startTime) - \(endTime)")
+                }
+        } else {
+            Circle()
+                .trim(from: 0, to: normalizedDiff / 360)
+    //                    .fill()
+                .stroke(color, style: StrokeStyle(lineWidth: showPopover ? 28 : 24, lineCap: .round))
+            // We subtract 90° so that mathematical 0° starts at the top (12 o'clock) instead of the right (6 o'clock)
+                .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 90))
+                .frame(width: 258 + extraSpace)
+                .onTapGesture {
+                    showPopover.toggle()
+                }
+                .confirmationDialog(
+                    "\(activity.title)",
+                    isPresented: $showPopover,
+                    titleVisibility: .visible
+                ) {
+                    
+                } message: {
+                    Image(systemName: "clock")
+                    Text("\(startTime) - \(endTime)")
+                }
+
+            
+            // Bedtime Knob (Start)
+            KnobView(imageName: activity.icon)
+                .offset(x: radius-56)
+                .rotationEffect(.degrees(activity.startAngle(timezone: timezone) - 88))
+            //            .gesture(
+            //                DragGesture(minimumDistance: 0, coordinateSpace: .named("slider"))
+            //                    .onChanged { value in
+            //                        startAngle = getAngle(location: value.location, center: center)
+            //                    }
+            //            )
+        }
+        
+        
         
     }
     /// Converts a dragged coordinate back into an angle mapped strictly between 0° and 360°

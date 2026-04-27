@@ -18,7 +18,7 @@ struct ScheduleView: View {
         Activity(title: "Work", icon: "briefcase.fill", startTime: timeSetter(hour: 20, minute: 0), endTime: timeSetter(hour: 1, minute: 0)),
     ]
     
-    @State private var selectedProfile: String = "john"
+    @State private var selectedProfile: String = "nathan"
     let friends = defaultProfiles.map { (key, profile) in
         (id: key, name: profile.name)
     }
@@ -144,6 +144,14 @@ struct ScheduleView: View {
                         ActivityComponent(activity: outerCircle[ind], radius: radius+23, center: center, color: Color.darkOrange, extraSpace: 47, timezone: secondProfile.timezoneIdentifier)
                     }
                     
+                    // Mutual free times
+                    let mutualFreeTimes = getMutualFreeTimes(my: myProfile, other: secondProfile)
+                    
+                    if !mutualFreeTimes.isEmpty {
+                        ForEach(mutualFreeTimes.indices, id: \.self) {ind in
+                            ActivityComponent(activity: mutualFreeTimes[ind], radius: radius, center: center, color: Color.orange.opacity(0.3), extraSpace: 25, timezone: myProfile.timezoneIdentifier)
+                        }
+                    }
                 }
                 //.coordinateSpace(name: "slider") // Used by DragGesture to ensure coordinates are relative to the center
             }
