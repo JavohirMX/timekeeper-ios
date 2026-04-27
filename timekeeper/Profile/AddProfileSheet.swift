@@ -7,9 +7,11 @@
 
 import SwiftUI
 import PhotosUI
+import SwiftData
 
 struct AddProfileSheet: View {
     var existingProfile: ProfileInfo? = nil
+    @Binding var isMainUser: Bool
     @State private var selectedImage : Image? = nil
     @State private var selectedItem: PhotosPickerItem? = nil
     
@@ -23,8 +25,8 @@ struct AddProfileSheet: View {
     )
     
     @State private var presentScheduleSheet = false
+    @Environment(\.modelContext) private var context
     @Binding var presentAddSheet: Bool
-    @Binding var profiles: [String: ProfileInfo]
 
     
     var body: some View {
@@ -59,6 +61,7 @@ struct AddProfileSheet: View {
                                let uiImage = UIImage(data: data) {
                                 
                                 selectedImage = Image(uiImage: uiImage)
+                                profile.imageData = data
                             }
                         }
                     }
@@ -98,13 +101,6 @@ struct AddProfileSheet: View {
                         Section{
                             ForEach(profile.schedules) { activity in
                                 HStack {
-                                    Button {
-                                        withAnimation {
-                                            profile.schedules.removeAll { $0.id == activity.id }
-                                        }
-                                    } label: {
-                                        Image(systemName: "minus.circle.fill").foregroundStyle(.red)
-                                    }
                                     Image(systemName: activity.icon)
                                         .foregroundStyle(.orange)
                                     Text(activity.title)
@@ -118,6 +114,9 @@ struct AddProfileSheet: View {
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                 }
+                            }
+                            .onDelete { indexSet in
+                                profile.schedules.remove(atOffsets: indexSet)
                             }
                             Button(action: { presentScheduleSheet.toggle() }) {
                                 HStack {
@@ -140,6 +139,9 @@ struct AddProfileSheet: View {
             .onAppear {
                 if let existing = existingProfile {
                     profile = existing
+                    if let data = existing.imageData, let uiImage = UIImage(data: data) {
+                        selectedImage = Image(uiImage: uiImage)
+                    }
                 }
             }
             
@@ -156,13 +158,20 @@ struct AddProfileSheet: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        //if user changes name while editing, delete  old dictionary key
-                        if let existing = existingProfile, existing.name != profile.name {
-                            profiles.removeValue(forKey: existing.name)
+                        if let existing = existingProfile {
+                            existing.name = profile.name
+                            existing.email = profile.email
+                            existing.phNum = profile.phNum
+                            existing.timezoneIdentifier = profile.timezoneIdentifier
+                            existing.imageData = profile.imageData
+                            existing.schedules = profile.schedules
+                        } else {
+                            profile.isMainUser = isMainUser
+                            context.insert(profile)
                         }
                         
-                        profiles[profile.name] = profile
                         presentAddSheet.toggle()
+                        
                     } label: {
                         Image(systemName: "checkmark")
                             .foregroundColor(.primary)

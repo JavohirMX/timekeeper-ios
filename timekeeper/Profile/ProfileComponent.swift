@@ -9,20 +9,32 @@ import SwiftUI
 
 struct ProfileComponent:View {
     var profile: ProfileInfo
-    @Binding var profiles: [String: ProfileInfo]
+    var isMainUser: Bool
     var body: some View {
         NavigationLink() {
-            ProfileDetails(profile: profile, profiles: $profiles)
-        }
+            ProfileDetails(profile: profile,
+                           isMainUser: isMainUser)
+                    }
         label: {
             HStack {
-                Image(profile.imageName)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: 72, height: 72)
-                    .clipped()
-                    .clipShape(Circle())
-                    .padding(.trailing, 5)
+                Group {
+                    if let data = profile.imageData, let uiImage = UIImage(data: data) {
+                        Image(uiImage: uiImage)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 72, height: 72)
+                            .clipped()
+                            .clipShape(Circle())
+                    } else {
+                        Image(profile.imageName)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: 72, height: 72)
+                            .clipped()
+                            .clipShape(Circle())
+                    }
+                }
+                .padding(.trailing, 5)
                 VStack(alignment: .leading){
                     Text(profile.name).font(.title2).fontWeight(.bold)
                     Text(Date(), style: .time)

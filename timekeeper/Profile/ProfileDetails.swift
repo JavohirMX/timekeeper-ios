@@ -3,18 +3,28 @@ import SwiftUI
 
 struct ProfileDetails: View {
     var profile: ProfileInfo
-    @Binding var profiles: [String: ProfileInfo]
+    var isMainUser: Bool
     @State private var showEditSheet = false
     
     var body: some View {
         List {
             Section {
                 VStack(spacing: 12) {
-                    Image(profile.imageName)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(width: 180, height: 180)
-                        .clipShape(Circle())
+                    Group {
+                        if let data = profile.imageData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                        } else {
+                            Image(profile.imageName)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 180, height: 180)
+                                .clipShape(Circle())
+                        }
+                    }
                     
                     Text(profile.name)
                         .font(.title)
@@ -23,7 +33,7 @@ struct ProfileDetails: View {
                     VStack(spacing: -5) {
                         Text(Date(), style: .time)
                             .font(.system(size: 60, weight: .light))
-                            .foregroundStyle(.white)
+                            .foregroundStyle(.primary)
                             .environment(\.timeZone, TimeZone(identifier: profile.timezoneIdentifier) ?? .current)
                         Text("Local Time")
                             .font(.subheadline)
@@ -33,7 +43,7 @@ struct ProfileDetails: View {
                     }
                 }
                 .frame(maxWidth: .infinity)//to centre the v stack to the middle of the page
-                .listRowBackground(Color.black) //to change this individual list row background and not the others
+                .listRowBackground(Color.clear) //to change this individual list row background and not the others
             }
             
             Section {
@@ -109,11 +119,11 @@ struct ProfileDetails: View {
             }
         }
         .sheet(isPresented: $showEditSheet) {
-                    AddProfileSheet(
-                        existingProfile: profile,
-                        presentAddSheet: $showEditSheet,
-                        profiles: $profiles
-                    )
-                }
+            AddProfileSheet(
+                existingProfile: profile,
+                isMainUser: .constant(isMainUser),
+                presentAddSheet: $showEditSheet
+            )
+        }
     }
 }
